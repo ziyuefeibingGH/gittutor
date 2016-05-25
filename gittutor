@@ -1,0 +1,82 @@
+git 命令记录：
+
+ /etc/gitconfig文件：系统中对所有用户都普遍适用的配置。若使用git config 时用--system 选项，读写
+的就是这个文件。
+ ~/.gitconfig文件：用户目录下的配置文件只适用于该用户。若使用git config 时用--global 选项，读写
+的就是这个文件。
+ 当前项目的git 目录中的配置文件（也就是工作目录中的.git/config 文件）：这里的配置仅仅针对当前
+项目有效。每一个级别的配置都会覆盖上层的相同配置，所以.git/config 里的配置会覆盖/etc/gitconfig
+中的同名变量。					----摘自《Pro_Git_Manual》
+	
+git --version											查看git版本
+						
+配置相关：
+git config list		查看配置
+git config --global user.name "yuebing"						设置用户名（必须）
+git config --global user.email "ziyuefeibingGH@gmail.com"		设置用户邮箱（必须）
+git config --global core.editor vim							设置惯用编辑器
+git config --global merge.tool vimdiff						差异分析工具--不知默认，不懂区别
+source Gitsrc/contrub/completion/git-completion.bash			命令补全
+git config --global core.quotepath false						解决中文显示问题
+git config --global color.ui	 true								在git命令输出中开启颜色显示
+
+基本操作：
+git init									初始化当前目录，开始使用git管理
+git add README							把README添加到暂存区
+git commit -m 'initial project version'			提交暂存区的内容到git仓库并备注
+git grep "config"							搜索工作区的文件内容
+git status									查看git工作区文件的状态，-s可以简化显示内容
+git log									查看提交历史
+git show 									根据后面内容不同显示不同的信息，如某次提交的哈希值，tag名等
+git diff 									对比工作区和暂存区的差异(git diff 比较时，暂存区有该文件的时候才有对比结果)
+git diff --staged								对比暂存区和git仓库
+git diff HEAD								对比工作区和git仓库
+git diff master								对比工作区和master分支
+git checkout file							检出文件并覆盖工作区文件
+git rm --cached file							从git仓库移除跟踪，并保留工作区的文件
+git log -p -2								显示最近的两次更新	
+git commit --amend							提交后使用可重新编辑提交说明
+
+
+远程	
+git clone git://github.com/schacon/grit.git			从远程仓库中克隆
+git remote -v									显示对应的克隆地址
+git remote									列出每个远程库的简短名字
+git fetch Paul									远程仓库抓取数据到本地
+-------										fetch 命令只是将远端的数据拉到本地仓库，并不自动合并到当前工作分支，只有当你确实准备好 了，才能手工合并。
+git push origin master							把本地的master 分支推送到origin 服务器				
+git checkout -b serverfix origin/serverfix				在远程分支的基础上分化出一个新的分支来，新建的serverfix 本地分支，其内容同远程分支origin/serverfix 一致
+git checkout --track origin/serverfix					效果同上一条命令
+git pull										相当于git fetch 和 git merge
+
+保存进度
+git stash								保存进度
+git stash list							查看现有的保存进度
+git stash pop							恢复最近一次保存的进度
+git stash apply stash@2					恢复标记为2的保存进度
+git stash branch testchanges				新建一个分区打开保存的进度成功后删除保存
+
+分支
+git branch 							查看各分支及当前所在分支
+git branch recover-branch SHA			在某个提交上建立一个分支
+git branch -d development				删除分支
+git checkout revocer-branch				切换到revocer-branch分支
+git checkout -b development				创建一个分支并切换到该分支
+git merge hotfix 						合并该分支内容到当前分支
+git branch --merged						查看哪些分支已被并入当前分支
+git branch --no-merged 					查看尚未合并的工作
+git rebase master						当前分支转换到需要衍合入的分支，根据差异打补丁文件
+
+重置
+git reset --hard HEAD^				把当前分支重置到上一个提交上
+git reset --hard SHA					重置到某一次提交
+git reflog							查看当前的状态
+git log -g							git log -g 会输出reflog 的正常日志， 从而显示更多有用信息
+								使用reset会丢弃历史如果想恢复，要使用git reflog
+
+标签
+git tag								显示标签
+git tag -a v1.4 -m 'my version 1.4'			-a指定标签名和-m标签说明
+git tag -s v1.5 -m 'my signed 1.5 tag''		-s签署标签，附上GPG签名
+git tag v1.4-lw							轻量级标签，直接给出标签名
+git push origin v1.5						推送标签，--tags推送所有（本地新增的）标签
